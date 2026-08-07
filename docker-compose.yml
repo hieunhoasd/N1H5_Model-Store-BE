@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: n1h5_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: n1h5_db
+      POSTGRES_USER: hieunho500
+      POSTGRES_PASSWORD: "0362476791"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data      
+  # 2. Redis 
+  redis:
+    image: redis:7-alpine
+    container_name: n1h5_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # 3. pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: n1h5_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hieunho500
+      PGADMIN_DEFAULT_PASSWORD: "0362476791"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+# 4. RabbitMQ - Message Broker 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: n1h5_rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"    
+      - "15672:15672" 
+    environment:
+      RABBITMQ_DEFAULT_USER: "hieunho500"
+      RABBITMQ_DEFAULT_PASS: "0362476791"
+volumes:
+  postgres_data:
+  redis_data:
