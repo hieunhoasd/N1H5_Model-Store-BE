@@ -9,5 +9,4 @@ public class N1h5ModelsBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(N1h5ModelsBackendApplication.class, args);
 	}
-
 }

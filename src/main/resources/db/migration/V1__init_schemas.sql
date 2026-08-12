@@ -1,8 +1,8 @@
--- Tạo các Schema cho hệ thống N1H5 Models
+-- Tạo các schema cho hệ thống N1H5
 CREATE SCHEMA IF NOT EXISTS auth;
 CREATE SCHEMA IF NOT EXISTS catalog;
-CREATE SCHEMA IF NOT EXISTS inventory;
 CREATE SCHEMA IF NOT EXISTS sales;
+CREATE SCHEMA IF NOT EXISTS inventory;
 CREATE SCHEMA IF NOT EXISTS payment;
 CREATE SCHEMA IF NOT EXISTS shipping;
 CREATE SCHEMA IF NOT EXISTS review;
