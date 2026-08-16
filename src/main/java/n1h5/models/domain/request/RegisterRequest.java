@@ -13,7 +13,6 @@ public class RegisterRequest {
 
     @NotBlank(message = "Username không được để trống")
     @Size(min = 4, max = 30, message = "Username phải từ 4 đến 30 ký tự")
-    @Pattern(regexp = "^[a-zA-Z0-9_.]+$", message = "Username chỉ gồm chữ, số, dấu chấm và gạch dưới")
     private String username;
 
     @NotBlank(message = "Email không được để trống")
@@ -23,7 +22,6 @@ public class RegisterRequest {
 
     @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 8, max = 64, message = "Mật khẩu phải từ 8 đến 64 ký tự")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số")
     private String password;
 
     @NotBlank(message = "Tên không được để trống")

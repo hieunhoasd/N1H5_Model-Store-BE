@@ -2,6 +2,7 @@ package n1h5.models.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -12,6 +13,7 @@ import n1h5.models.domain.response.UserResponse;
 import n1h5.models.service.AuthService;
 
 @RestController
+@RequestMapping("v1/api")
 public class AuthController {
     private final AuthService authService;
     public AuthController(AuthService authService){

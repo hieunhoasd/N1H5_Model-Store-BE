@@ -13,6 +13,7 @@ import n1h5.models.domain.response.UserResponse;
 import n1h5.models.repository.AuthRepository;
 import n1h5.models.repository.RoleRepository;
 import n1h5.models.repository.UsersRepository;
+import n1h5.models.util.Exception.BusinessException;
 
 @Service
 public class AuthService {
@@ -36,7 +37,7 @@ public class AuthService {
             String rawPassword=registerRequest.getPassword();
             String hashPassword =passwordEndcoder.encode(rawPassword);
             newAccount.setPassword(hashPassword);
-            Role defaultRole = this.roleRepository.findByName("ROLE_USER").get();
+            Role defaultRole = this.roleRepository.findByRoleName("ROLE_USER").orElseThrow(()-> new BusinessException("khong tin thay role"));
             Set<Role> roles = new HashSet<>();
             roles.add(defaultRole);
             newAccount.setRoles(roles);
