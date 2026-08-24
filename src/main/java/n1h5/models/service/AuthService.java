@@ -4,15 +4,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import n1h5.models.config.CustomUserDetails;
 import n1h5.models.domain.auth.Role;
 import n1h5.models.domain.auth.UserStatus;
 import n1h5.models.domain.auth.Users;
 import n1h5.models.domain.request.LoginRequest;
 import n1h5.models.domain.request.RegisterRequest;
+import n1h5.models.domain.response.LoginResponse;
 import n1h5.models.domain.response.UserResponse;
 import n1h5.models.repository.AuthRepository;
 import n1h5.models.repository.RoleRepository;
@@ -39,7 +42,7 @@ public class AuthService {
         this.roleRepository=roleRepository;
         this.jwtService=jwtService;
         this.authenticationManager=authenticationManager;
-        this.userDetailsService=userDetailsService
+        this.userDetailsService=userDetailsService;
     }
     public Users registerAccount(RegisterRequest registerRequest){
             Users newAccount = new Users();
@@ -77,7 +80,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        Users user = userRepository.findByEmail(request.getEmail())
+        Users user = this.usersRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         CustomUserDetails userDetails = new CustomUserDetails(user);

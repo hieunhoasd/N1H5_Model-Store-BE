@@ -2,6 +2,7 @@ package n1h5.models.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,7 +11,7 @@ import jakarta.validation.Valid;
 import n1h5.models.domain.auth.Users;
 import n1h5.models.domain.request.LoginRequest;
 import n1h5.models.domain.request.RegisterRequest;
-import n1h5.models.domain.response.LoginReponse;
+import n1h5.models.domain.response.LoginResponse;
 import n1h5.models.domain.response.UserResponse;
 import n1h5.models.service.AuthService;
 
