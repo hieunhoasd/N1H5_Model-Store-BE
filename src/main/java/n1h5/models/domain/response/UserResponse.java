@@ -1,6 +1,7 @@
 package n1h5.models.domain.response;
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
+import n1h5.models.domain.auth.UserStatus;
 @Getter
 @Setter
 public class UserResponse {
@@ -14,4 +15,7 @@ public class UserResponse {
     private String lastName;
 
     private String phone;
+
+    private UserStatus status;
+    
 }

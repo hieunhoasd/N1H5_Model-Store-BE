@@ -33,12 +33,12 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
         }
         if (body instanceof String) {
             try {
-                return objectMapper.writeValueAsString(ApiResponse.success(body, "Thành công"));
+                return objectMapper.writeValueAsString(ApiResponse.success(body, "Success"));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Lỗi serialize JSON cho String response", e);
             }
         }
         
-        return ApiResponse.success(body, "Thành công");
+        return ApiResponse.success(body, "Success");
     }
 }

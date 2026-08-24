@@ -14,14 +14,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Tắt CSRF
-            .csrf(csrf -> csrf.disable())
-            // 2. Cấu hình phân quyền đường dẫn (
-            .authorizeHttpRequests(auth -> auth  
-                .anyRequest().permitAll()
-            );
+            // 1. Tắt CSRF 
+            .csrf(AbstractHttpConfigurer::disable)
+            
+            // 2. Cấu hình phân quyền Request
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll() // Public API Đăng nhập/Đăng ký
+                .anyRequest().authenticated() // Tất cả các API còn lại phải gửi kèm Token
+            )
+            
+            // 3. Cấu hình Session sang STATELESS (Không lưu phiên đăng nhập trên RAM Server)
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            
+            // 4. Thiết lập AuthenticationProvider
+            .authenticationProvider(authenticationProvider)
+            
+            // 5. Đưa JwtAuthenticationFilter vào chạy TRƯỚC filter mặc định
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+    
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

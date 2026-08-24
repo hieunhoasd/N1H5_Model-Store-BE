@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import jakarta.validation.constraints.*;
 import lombok.Setter;
-import n1h5.models.domain.auth.UserStatus;
 import lombok.Getter;
 @Getter
 @Setter
@@ -35,5 +34,6 @@ public class RegisterRequest {
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^(0|\\+84)[3|5|7|8|9][0-9]{8}$", message = "Số điện thoại không đúng định dạng Việt Nam")
     private String phone;
+    
 
 }
