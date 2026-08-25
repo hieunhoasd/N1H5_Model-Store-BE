@@ -31,8 +31,7 @@ public class AuthController {
 
    @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginAccount(@Valid @RequestBody LoginRequest request) {
-        // Sửa lỗi dòng 34 bị đỏ bằng cách truyền authService.login(request) vào đây
-        return ResponseEntity.ok(authService.login(request));
+        return ResponseEntity.ok(this.authService.login(request));
     }
 
     @PostMapping("/refresh-token")

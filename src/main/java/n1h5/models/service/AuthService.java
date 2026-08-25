@@ -1,6 +1,8 @@
 package n1h5.models.service;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -74,6 +76,18 @@ public class AuthService {
         return usersDTO;
     }
     
+    private Map<String, Object> buildExtraClaims(Users user, CustomUserDetails userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("userId", user.getUserId());
+    claims.put("roles", userDetails.getAuthorities());
+    claims.put("first_Name",user.getFirstName());
+    claims.put("last_Name",user.getLastName());
+    claims.put("username",user.getUsername());
+    claims.put("phone",user.getPhone());
+    claims.put("email",user.getEmail());
+    return claims;
+    }
+
     public LoginResponse login(LoginRequest request) {
         // Đúng Username/Password thì đi tiếp, sai sẽ tự động ném ra BadCredentialsException
         authenticationManager.authenticate(
@@ -84,8 +98,8 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
-
-        String accessToken = jwtService.generateToken(userDetails);
+        Map<String, Object> extraClaims = buildExtraClaims(user, userDetails);
+        String accessToken = jwtService.generateToken(extraClaims,userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return LoginResponse.builder()
@@ -93,6 +107,7 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
 
     // 2. Logic Cấp lại Access Token từ Refresh Token
     public LoginResponse refreshToken(String refreshToken) {
@@ -103,7 +118,9 @@ public class AuthService {
             
             // Kiểm tra Refresh Token có hợp lệ & chưa hết hạn không
             if (jwtService.isTokenValid(refreshToken, userDetails)) {
-                String newAccessToken = jwtService.generateToken(userDetails);
+                Users user = usersRepository.findByEmail(userEmail).orElseThrow();
+                Map<String, Object> extraClaims = buildExtraClaims(user, (CustomUserDetails) userDetails);
+                String newAccessToken = jwtService.generateToken(extraClaims,userDetails);
                 
                 return LoginResponse.builder()
                         .accessToken(newAccessToken)
@@ -113,5 +130,7 @@ public class AuthService {
         }
         throw new RuntimeException("Refresh Token không hợp lệ hoặc đã hết hạn!");
     }
+
+    
 
 }

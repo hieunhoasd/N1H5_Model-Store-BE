@@ -3,6 +3,7 @@ package n1h5.models.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
@@ -14,7 +15,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.util.function.Function;
 
 @Service
 public class JwtService {
@@ -34,10 +34,7 @@ public class JwtService {
     }
     
     // tao ra jwt
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(),userDetails);
-    }
-
+    
     public String generateToken(Map<String,Object> extraClaims,UserDetails userDetails){
         return Jwts.builder()
                     .claims(extraClaims)
@@ -92,5 +89,6 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    
 
 }
