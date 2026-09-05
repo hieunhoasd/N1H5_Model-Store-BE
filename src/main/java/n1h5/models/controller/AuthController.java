@@ -2,21 +2,23 @@ package n1h5.models.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import n1h5.models.domain.auth.Users;
 import n1h5.models.domain.request.LoginRequest;
+import n1h5.models.domain.request.RefreshTokenRequest;
 import n1h5.models.domain.request.RegisterRequest;
 import n1h5.models.domain.response.LoginResponse;
 import n1h5.models.domain.response.UserResponse;
 import n1h5.models.service.AuthService;
 
 @RestController
-@RequestMapping("v1/api")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
     public AuthController(AuthService authService){
@@ -28,19 +30,22 @@ public class AuthController {
         UserResponse userdto = this.authService.userDTO(account);
         return ResponseEntity.ok().body(userdto);
     }
-
-   @PostMapping("/login")
+    
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginAccount(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(this.authService.login(request));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponse> refreshToken(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        String refreshToken = authHeader.substring(7);
-        return ResponseEntity.ok(authService.refreshToken(refreshToken));
+    public ResponseEntity<LoginResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(this.authService.refreshToken(request));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        this.authService.logoutAccount(request);
+        return ResponseEntity.ok("Đăng xuất thành công");
+    }
+    
+
 }

@@ -74,6 +74,12 @@ public class JwtService {
                 .getPayload();
     }
 
+    public long getExpirationTime(String token) {
+        Date expiration = extractExpiration(token);
+        long remainingTime = expiration.getTime() - System.currentTimeMillis();
+        return Math.max(0, remainingTime); // Trả về số ms còn lại, nếu đã hết hạn thì trả về 0
+    }
+    
     // kiem tra token 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);

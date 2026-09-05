@@ -1,4 +1,4 @@
-package n1h5.models.config;
+package n1h5.models.util.SecurityUtil;
 
 import java.util.Collection;
 
@@ -6,12 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import n1h5.models.domain.auth.Users;
+@Getter
+@AllArgsConstructor
 public class CustomUserDetails implements  UserDetails {
     private final Users user;
-    public CustomUserDetails(Users user){
-        this.user = user;
-    }
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -20,6 +21,7 @@ public class CustomUserDetails implements  UserDetails {
                 .toList();
     }
 
+    
     @Override
     public String getPassword() { return user.getPassword(); }
 
