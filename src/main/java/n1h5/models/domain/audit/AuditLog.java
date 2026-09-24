@@ -17,7 +17,7 @@ public class AuditLog {
     private Long logId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
     private String action;
 

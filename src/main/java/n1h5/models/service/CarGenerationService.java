@@ -16,6 +16,7 @@ import n1h5.models.domain.request.CarGenerationRequest;
 import n1h5.models.domain.response.CarGenerationResponse;
 import n1h5.models.repository.CarGenerationRepository;
 import n1h5.models.repository.CarSeriesRepository;
+import n1h5.models.util.Annotation.LogActivity;
 import n1h5.models.util.Exception.BusinessException;
 
 @Service
@@ -40,8 +41,7 @@ public class CarGenerationService {
                 .build();
     }
 
-    @Transactional
-    // @LogActivity(action = "CREATE", entityName = "CarGeneration")
+    @LogActivity(action = "CREATE", entityName = "CarGeneration")
     public CarGenerationResponse create(CarGenerationRequest request) {
         CarSeries series = null;
         if (request.getSeriesId() != null) {
@@ -59,7 +59,6 @@ public class CarGenerationService {
         return mapToResponse(carGenerationRepository.save(generation));
     }
 
-    @Transactional(readOnly = true)
     public PageResponse getAll(Pageable pageable) {
         Page<CarGeneration> pageGenerations = carGenerationRepository.findAll(pageable);
 
@@ -80,15 +79,13 @@ public class CarGenerationService {
         return res;
     }
 
-    @Transactional(readOnly = true)
     public CarGenerationResponse getById(Long id) {
         CarGeneration generation = carGenerationRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("CarGeneration not found with id: " + id));
         return mapToResponse(generation);
     }
 
-    @Transactional
-    // @LogActivity(action = "UPDATE", entityName = "CarGeneration")
+    @LogActivity(action = "UPDATE", entityName = "CarGeneration")
     public CarGenerationResponse update(Long id, CarGenerationRequest request) {
         CarGeneration generation = carGenerationRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("CarGeneration not found with id: " + id));
@@ -106,8 +103,7 @@ public class CarGenerationService {
         return mapToResponse(carGenerationRepository.save(generation));
     }
 
-    @Transactional
-    // @LogActivity(action = "DELETE", entityName = "CarGeneration")
+    @LogActivity(action = "DELETE", entityName = "CarGeneration")
     public void delete(Long id) {
         if (!carGenerationRepository.existsById(id)) {
             throw new BusinessException("CarGeneration not found with id: " + id);

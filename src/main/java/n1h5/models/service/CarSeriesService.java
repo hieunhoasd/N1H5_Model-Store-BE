@@ -14,6 +14,7 @@ import n1h5.models.domain.request.CarSeriesRequest;
 import n1h5.models.domain.response.CarSeriesResponse;
 import n1h5.models.repository.BrandRepository;
 import n1h5.models.repository.CarSeriesRepository;
+import n1h5.models.util.Annotation.LogActivity;
 import n1h5.models.util.Exception.BusinessException;
 
 @Service
@@ -38,6 +39,7 @@ public class CarSeriesService {
     }
 
     // 1. CREATE
+    @LogActivity(action = "CREATE", entityName = "CarSeries")
     public CarSeriesResponse handleCreateCarSeriesService(CarSeriesRequest carRequest) {
         Brand brand = null;
         if (carRequest.getBrandId() != null) {
@@ -65,7 +67,6 @@ public class CarSeriesService {
         mt.setPages(pageCarSeries.getTotalPages());
         mt.setTotal(pageCarSeries.getTotalElements());
 
-        // Chuyển đổi danh sách Entity sang danh sách DTO bằng mapToResponse
         List<CarSeriesResponse> listResponses = pageCarSeries.getContent()
                 .stream()
                 .map(this::mapToResponse)
@@ -85,6 +86,7 @@ public class CarSeriesService {
     }
 
     // 4. UPDATE
+    @LogActivity(action = "UPDATE", entityName = "CarSeries")
     public CarSeriesResponse update(Long id, CarSeriesRequest request) {
         CarSeries carSeries = carSeriesRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("CarSeries not found with id: " + id));
@@ -103,11 +105,11 @@ public class CarSeriesService {
     }
 
     // 5. DELETE
+    @LogActivity(action = "DELETE", entityName = "CarSeries")
     public void delete(Long id) {
         if (!carSeriesRepository.existsById(id)) {
             throw new BusinessException("CarSeries not found with id: " + id);
         }
         carSeriesRepository.deleteById(id);
     }
-    
 }

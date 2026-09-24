@@ -16,6 +16,7 @@ import n1h5.models.domain.request.CarVariantRequest;
 import n1h5.models.domain.response.CarVariantResponse;
 import n1h5.models.repository.CarGenerationRepository;
 import n1h5.models.repository.CarVariantRepository;
+import n1h5.models.util.Annotation.LogActivity;
 import n1h5.models.util.Exception.BusinessException;
 
 @Service
@@ -40,7 +41,7 @@ public class CarVariantService {
                 .build();
     }
 
-    // @LogActivity(action = "CREATE", entityName = "CarVariant")
+    @LogActivity(action = "CREATE", entityName = "CarVariant")
     public CarVariantResponse create(CarVariantRequest request) {
         CarGeneration generation = null;
         if (request.getGenerationId() != null) {
@@ -84,7 +85,7 @@ public class CarVariantService {
         return mapToResponse(variant);
     }
 
-    // @LogActivity(action = "UPDATE", entityName = "CarVariant")
+    @LogActivity(action = "UPDATE", entityName = "CarVariant")
     public CarVariantResponse update(Long id, CarVariantRequest request) {
         CarVariant variant = carVariantRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("CarVariant not found with id: " + id));
@@ -102,7 +103,7 @@ public class CarVariantService {
         return mapToResponse(carVariantRepository.save(variant));
     }
 
-    // @LogActivity(action = "DELETE", entityName = "CarVariant")
+    @LogActivity(action = "DELETE", entityName = "CarVariant")
     public void delete(Long id) {
         if (!carVariantRepository.existsById(id)) {
             throw new BusinessException("CarVariant not found with id: " + id);

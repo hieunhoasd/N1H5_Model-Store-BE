@@ -1,6 +1,6 @@
 package n1h5.models.service;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,67 +11,97 @@ import n1h5.models.domain.DTO.BrandCreateDTO;
 import n1h5.models.domain.catalog.Brand;
 import n1h5.models.domain.pagination.Meta;
 import n1h5.models.domain.pagination.PageResponse;
+import n1h5.models.domain.response.BrandResponse;
 import n1h5.models.repository.BrandRepository;
+import n1h5.models.util.Annotation.LogActivity;
 import n1h5.models.util.Exception.BusinessException;
 
 @Service
 public class BrandService {
-    private BrandRepository brandRepository;
-    private CloudinaryService cloudinaryService;
-    public BrandService(BrandRepository brandRepository, CloudinaryService cloudinaryService){
-        this.brandRepository=brandRepository;
-        this.cloudinaryService=cloudinaryService;
+
+    private final BrandRepository brandRepository;
+    private final CloudinaryService cloudinaryService;
+
+    public BrandService(BrandRepository brandRepository, CloudinaryService cloudinaryService) {
+        this.brandRepository = brandRepository;
+        this.cloudinaryService = cloudinaryService;
     }
-    public Brand handleCreateBrand(BrandCreateDTO dto) {
-        Brand newBr = new Brand();
-        
-        newBr.setBrandName(dto.getBrandName());
-        newBr.setCountry(dto.getCountry());
-        newBr.setFoundedYear(dto.getFoundedYear());
-        newBr.setDescription(dto.getDescription());
-        
+
+    // Mapper chuyển đổi Entity sang Response DTO
+    private BrandResponse mapToResponse(Brand entity) {
+        return BrandResponse.builder()
+                .brandId(entity.getBrandId())
+                .brandName(entity.getBrandName())
+                .country(entity.getCountry())
+                .foundedYear(entity.getFoundedYear())
+                .logos(entity.getLogos())
+                .description(entity.getDescription())
+                .build();
+    }
+
+    @LogActivity(action = "CREATE", entityName = "Brand")
+    public BrandResponse handleCreateBrand(BrandCreateDTO dto) {
+        if (this.brandRepository.existsByBrandName(dto.getBrandName())) {
+            throw new BusinessException("Brand name đã tồn tại");
+        }
+
+        Brand newBr = Brand.builder()
+                .brandName(dto.getBrandName())
+                .country(dto.getCountry())
+                .foundedYear(dto.getFoundedYear())
+                .description(dto.getDescription())
+                .build();
+
         // Xử lý file ảnh logo
         MultipartFile file = dto.getLogoFile();
         if (file != null && !file.isEmpty()) {
-            // Gọi CloudinaryService đẩy ảnh 
             String realImageUrl = cloudinaryService.uploadImage(file, "brands");
             newBr.setLogos(realImageUrl);
         }
-        return this.brandRepository.save(newBr);
+
+        Brand savedBrand = this.brandRepository.save(newBr);
+        return mapToResponse(savedBrand);
     }
 
-    public Brand handleGetBrandById(Long id) {
-        Optional<Brand> brandOptional=this.brandRepository.findById(id);
-         if (brandOptional.isEmpty()) {
-            throw new BusinessException("Brand không tồn tại với ID: " + id);
-         }
-        return brandOptional.get();
+    public BrandResponse handleGetBrandById(Long id) {
+        Brand brand = this.brandRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Brand không tồn tại với ID: " + id));
+        return mapToResponse(brand);
     }
+
     public PageResponse handleGetAllBrand(Pageable pageable) {
-         Page<Brand> pageBrand=this.brandRepository.findAll(pageable);
+        Page<Brand> pageBrand = this.brandRepository.findAll(pageable);
 
-         Meta mt = new Meta();
-         mt.setPage(pageable.getPageNumber() + 1); 
-         mt.setPageSize(pageable.getPageSize());
-         mt.setPages(pageBrand.getTotalPages());
-         mt.setTotal(pageBrand.getTotalElements());
+        Meta mt = new Meta();
+        mt.setPage(pageable.getPageNumber() + 1);
+        mt.setPageSize(pageable.getPageSize());
+        mt.setPages(pageBrand.getTotalPages());
+        mt.setTotal(pageBrand.getTotalElements());
 
-         PageResponse res = new PageResponse();
-         res.setMeta(mt);
-         res.setResult(pageBrand.getContent());
+        List<BrandResponse> listResponses = pageBrand.getContent()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
 
-         return res;
+        PageResponse res = new PageResponse();
+        res.setMeta(mt);
+        res.setResult(listResponses);
+
+        return res;
     }
 
-    public void handleDeleteBrandById(Long id){
+    @LogActivity(action = "DELETE", entityName = "Brand")
+    public void handleDeleteBrandById(Long id) {
+        if (!this.brandRepository.existsById(id)) {
+            throw new BusinessException("Brand không tồn tại với ID: " + id);
+        }
         this.brandRepository.deleteById(id);
     }
 
-    public Brand handleUpdateBrand(Long id, BrandCreateDTO dto) {
-        Brand existingBrand = this.handleGetBrandById(id);
-        if (existingBrand == null) {
-            return null;
-        }
+    @LogActivity(action = "UPDATE", entityName = "Brand")
+    public BrandResponse handleUpdateBrand(Long id, BrandCreateDTO dto) {
+        Brand existingBrand = this.brandRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Brand không tồn tại với ID: " + id));
 
         existingBrand.setBrandName(dto.getBrandName());
         existingBrand.setCountry(dto.getCountry());
@@ -85,7 +115,7 @@ public class BrandService {
             existingBrand.setLogos(realImageUrl);
         }
 
-        return this.brandRepository.save(existingBrand);
+        Brand updatedBrand = this.brandRepository.save(existingBrand);
+        return mapToResponse(updatedBrand);
     }
-    
 }

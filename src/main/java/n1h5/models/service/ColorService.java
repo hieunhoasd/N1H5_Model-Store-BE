@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import n1h5.models.annotation.LogActivity;
 import n1h5.models.domain.catalog.Color;
 import n1h5.models.domain.pagination.Meta;
 import n1h5.models.domain.pagination.PageResponse;
