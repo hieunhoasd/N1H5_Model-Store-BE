@@ -13,6 +13,7 @@ import n1h5.models.domain.auth.Users;
 import n1h5.models.domain.request.LoginRequest;
 import n1h5.models.domain.request.RefreshTokenRequest;
 import n1h5.models.domain.request.RegisterRequest;
+import n1h5.models.domain.request.SocialLoginRequest;
 import n1h5.models.domain.response.LoginResponse;
 import n1h5.models.domain.response.UserResponse;
 import n1h5.models.service.AuthService;
@@ -24,11 +25,11 @@ public class AuthController {
     public AuthController(AuthService authService){
         this.authService=authService;
     }
+    
     @PostMapping("/register")
-    public ResponseEntity <UserResponse> registerAccount(@Valid @RequestBody RegisterRequest registerRequest ){
-        Users account=this.authService.registerAccount(registerRequest);
-        UserResponse userdto = this.authService.userDTO(account);
-        return ResponseEntity.ok().body(userdto);
+    public ResponseEntity<UserResponse> registerAccount(@Valid @RequestBody RegisterRequest registerRequest) {
+        UserResponse userResponse = this.authService.registerAccount(registerRequest);
+        return ResponseEntity.ok(userResponse);
     }
     
     @PostMapping("/login")
@@ -46,6 +47,10 @@ public class AuthController {
         this.authService.logoutAccount(request);
         return ResponseEntity.ok("Đăng xuất thành công");
     }
-    
+
+    @PostMapping("/social-login")
+    public ResponseEntity<LoginResponse> socialLogin(@Valid @RequestBody SocialLoginRequest request) {
+        return ResponseEntity.ok(authService.processSocialLogin(request));
+    }
 
 }

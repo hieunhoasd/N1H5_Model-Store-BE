@@ -27,17 +27,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final StringRedisTemplate redisTemplate; 
     
+    // Bỏ qua filter này đối với các request Auth và đường dẫn /error
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/api/v1/auth/") || path.equals("/error");
+    }
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
-
+        
         // 1. Kiểm tra sự tồn tại của Header Authorization
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -53,9 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"message\": \"Token đã đăng xuất, vui lòng đăng nhập lại\"}");
-            return; // Chặn request tại đây, không cho đi tiếp
+            return;
         }
-        
 
         username = jwtService.extractUsername(jwt);
 
@@ -80,5 +85,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 7. Chuyển request sang Filter tiếp theo trong chuỗi
         filterChain.doFilter(request, response);
     }
-    
 }

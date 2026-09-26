@@ -49,6 +49,9 @@ public class Users {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+    
     @Column(name = "phone")
     private String phone;
 

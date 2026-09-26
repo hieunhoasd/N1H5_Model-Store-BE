@@ -3,6 +3,7 @@ package n1h5.models.util.Exception;
 import n1h5.models.domain.response.ErrorApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +40,16 @@ public class GlobalExceptionHandler {
                 .message("Dữ liệu đầu vào không hợp lệ")
                 .errors(errors)
                 .build();
+    }
+    
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorApiResponse> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+            ErrorApiResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message("Email hoặc mật khẩu không chính xác!")
+                .build()
+        );
     }
     
 }

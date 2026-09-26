@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS auth.roles (
 );
 
 -- 3. Bảng users
+-- 3. Bảng users (đã bổ sung avatar_url)
 CREATE TABLE IF NOT EXISTS auth.users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS auth.users (
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     phone VARCHAR(20),
+    avatar_url VARCHAR(512), 
     status VARCHAR(50),
     created_at TIMESTAMP,
     updated_at TIMESTAMP

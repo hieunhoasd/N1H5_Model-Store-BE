@@ -32,7 +32,7 @@ public class BrandController {
         BrandResponse newBr = this.brandService.handleCreateBrand(dto);
         return ResponseEntity.ok().body(newBr);
     }
-
+    
     @GetMapping("/getBrand/{id}")
     public ResponseEntity<BrandResponse> getBrandById(@PathVariable("id") Long id) {
         BrandResponse brand = this.brandService.handleGetBrandById(id);

@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import n1h5.models.domain.catalog.Tag;
 import n1h5.models.domain.pagination.Meta;
-import n1h5.models.domain.pagination.PageRespons;
+import n1h5.models.domain.pagination.PageResponse; // Sửa lỗi sai chính tả PageRespons thành PageResponse
 import n1h5.models.domain.request.TagRequest;
 import n1h5.models.domain.response.TagResponse;
 import n1h5.models.repository.TagRepository;
@@ -30,6 +32,7 @@ public class TagService {
                 .build();
     }
 
+    @Transactional
     @LogActivity(action = "CREATE", entityName = "Tag")
     public TagResponse handleCreateTag(TagRequest request) {
         if (this.tagRepository.existsByTagName(request.getTagName())) {
@@ -70,6 +73,7 @@ public class TagService {
         return res;
     }
 
+    @Transactional
     @LogActivity(action = "UPDATE", entityName = "Tag")
     public TagResponse handleUpdateTag(Long id, TagRequest request) {
         Tag existingTag = this.tagRepository.findById(id)
@@ -80,6 +84,7 @@ public class TagService {
         return mapToResponse(this.tagRepository.save(existingTag));
     }
 
+    @Transactional
     @LogActivity(action = "DELETE", entityName = "Tag")
     public void handleDeleteTagById(Long id) {
         if (!this.tagRepository.existsById(id)) {

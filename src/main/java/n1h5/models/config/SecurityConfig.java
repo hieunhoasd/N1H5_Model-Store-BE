@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {})          
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll() // Whitelist Auth API
+                .requestMatchers("/api/v1/auth/**", "/error").permitAll() // Thêm /error ở đây
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
